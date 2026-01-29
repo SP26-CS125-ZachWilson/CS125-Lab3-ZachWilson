@@ -119,3 +119,139 @@ with open('cs_students.csv', 'r') as file:
         print(row)
 
 print("\nExercise 2 Complete!")
+
+# Exercise 3 - Data Validation
+# Demos validating user input before writing to CSV file.
+
+print("\n=== Exercise 3: Data Validation ===\n")
+
+
+# Step 1: Function to validate and collect product information
+def get_validated_product():
+    """Collect and validate product information from user."""
+
+    # Get product name (no validation needed)
+    name = input("Enter product name: ")
+
+    # Validate price (must be positive number)
+    while True:
+        try:
+            price = float(input("Enter product price: $"))
+            if price > 0:
+                break
+            else:
+                print("Error: Price must be a positive number. Try again.")
+        except ValueError:
+            print("Error: Price must be a valid number. Try again.")
+
+    # Validate quantity (must be positive integer)
+    while True:
+        try:
+            quantity = int(input("Enter product quantity: "))
+            if quantity > 0:
+                break
+            else:
+                print("Error: Quantity must be a positive integer. Try again.")
+        except ValueError:
+            print("Error: Quantity must be a valid integer. Try again.")
+
+    return {'name': name, 'price': price, 'quantity': quantity}
+
+
+# Step 2: Collect product information with validation
+print("=== Step 1: Enter product information ===")
+product = get_validated_product()
+print(f"\nValidated Product: {product['name']}, ${product['price']:.2f}, Qty: {product['quantity']}")
+
+# Step 3: Write validated data to CSV file with error handling
+print("\n=== Step 2: Writing to inventory.csv ===")
+try:
+    with open('inventory.csv', 'w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=['name', 'price', 'quantity'])
+        writer.writeheader()
+        writer.writerow(product)
+    print("Product successfully written to inventory.csv!")
+except IOError as e:
+    print(f"Error writing to file: {e}")
+
+# Step 4: Read and display the inventory file
+print("\n=== Step 3: Reading inventory.csv ===")
+try:
+    with open('inventory.csv', 'r') as file:
+        reader = csv.DictReader(file)
+        for item in reader:
+            print(f"Product: {item['name']}, Price: ${item['price']}, Quantity: {item['quantity']}")
+except FileNotFoundError:
+    print("Error: inventory.csv not found!")
+
+print("\nExercise 3 Complete!")
+
+# Exercise 4 - Error Handling
+# Demos robust error handling for various file operation scenarios.
+
+print("\n=== Exercise 4: Error Handling ===\n")
+
+
+# Step 1: Create a function with comprehensive error handling
+def read_file_safely(filename):
+    """
+    Attempt to read a file with proper error handling.
+    Returns file contents if successful, None otherwise.
+    """
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            return content
+    except FileNotFoundError:
+        print(f"Error: The file '{filename}' does not exist.")
+        return None
+    except PermissionError:
+        print(f"Error: You don't have permission to access '{filename}'.")
+        return None
+    except IOError as e:
+        print(f"Error: An I/O error occurred while reading '{filename}': {e}")
+        return None
+
+
+# Step 2: Test with existing file (should succeed)
+print("=== Scenario 1: Reading an existing file ===")
+content = read_file_safely('sample.txt')
+if content:
+    print("File read successfully!")
+    print(f"First 50 characters: {content[:50]}...")
+print()
+
+# Step 3: Test with non-existent file (FileNotFoundError)
+print("=== Scenario 2: Reading a non-existent file ===")
+content = read_file_safely('nonexistent_file.txt')
+print()
+
+# Step 4: Test with directory instead of file (IOError/IsADirectoryError)
+print("=== Scenario 3: Attempting to read a directory ===")
+content = read_file_safely('.')
+print()
+
+# Step 5: Demonstrate try-except-else-finally structure
+print("=== Step 4: Complete error handling with finally ===")
+filename = 'students.csv'
+try:
+    file = open(filename, 'r')
+    lines = file.readlines()
+    print(f"Successfully read {len(lines)} lines from {filename}")
+except FileNotFoundError:
+    print(f"Error: '{filename}' not found")
+except IOError as e:
+    print(f"I/O Error: {e}")
+else:
+    print("File operation completed without errors")
+finally:
+    try:
+        file.close()
+        print("File closed properly")
+    except:
+        print("No file to close")
+
+print("\nExercise 4 Complete!")
+print("\n" + "=" * 50)
+print("All Lab 3 Exercises Complete!")
+print("=" * 50)
